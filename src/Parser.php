@@ -23,22 +23,24 @@ class Parser
         // there's 2 major contexts, expressions and values
         // values are the final value that proceeds an operator like eq followed by a bracket
         // first let's make a flag to show if we are in the value scope or an operator has just occurred
-        $recent_operator = null;
-
-        $field_names = [];
 
         $current_indentation = 0;
+        $previous_context = null;
 
-        $available_contexts = [self::OPEN_BRACKET, self::FIELD_NAME];
 
         while ($token = $this->_tokens->peek()) {
             // check the context
 
+            $context = $this->getContext($token['type'], $previous_context);
 
-            // get the next context
+            $current_indentation = $this->getIndentation($current_indentation, $context);
 
+            //todo: use the context to build either an expression or field class
+
+            $previous_context = $context;
         }
 
+        // todo: check that it ended on a bracket too
         if ($current_indentation != 0) {
             //todo: throw error
         }
@@ -65,7 +67,33 @@ class Parser
          */
     }
 
-    protected function validateContext(array $contexts, $type)
+    /**
+     * Returns the context (a const in this class) from a token type (a Lexer const)
+     * @param int $token_type A token type which is a const on the Lexer class
+     * @param int|null $previous_context The last context type which is a const in this class. If null it's assumed to be the first token
+     * @return int Returns the current context, will throw exception if it fails
+     * @throws \Exception
+     */
+    public function getContext($token_type, $previous_context)
+    {
+        $possible_contexts = $this->getPossibleContext($token_type);
+        $allowed_contexts = $this->getAllowedContexts($previous_context);
+        $intersected = array_values(array_intersect($possible_contexts, $allowed_contexts));
+
+        if(!count($intersected)){
+            throw new \Exception("Validation exception..... previous context is '{$previous_context}''");
+        }
+
+        return $intersected[0];
+    }
+
+    /**
+     * Gets an array of possible contexts
+     * @param int $token_type A token type which is a const on the Lexer class
+     * @return
+     * @throws \Exception
+     */
+    public function getPossibleContext($token_type)
     {
         $available_contexts = [
             Lexer::INTEGER => [self::VALUE],
@@ -86,17 +114,54 @@ class Parser
             Lexer::LT => [self::CONDITIONAL],
             Lexer::LTE => [self::CONDITIONAL],
         ];
+        if(array_key_exists($token_type, $available_contexts)) {
+            return $available_contexts[$token_type];
+        }
+        //todo: make better exception
+        throw new \Exception("Token type is invalid");
+    }
 
-//        foreach($contexts as $context) {
-            if (!in_array($context, array_keys($available_contexts))) {
-                // todo: throw exception
-                // this context is totally invalid, use one of the statics in the class
-            }
+    /**
+     * Returns an array of allowed contexts
+     * @param int|null $previous_context The last context type which is a const in this class. If null it's assumed to be the first token
+     * @return array
+     * @throws \Exception
+     */
+    public function getAllowedContexts($previous_context)
+    {
+        $allowed_context_map = [
+            null => [self::OPEN_BRACKET, self::FIELD_NAME],
+            self::OPEN_BRACKET => [self::FIELD_NAME, self::VALUE],
+            self::CLOSE_BRACKET => [self::AND_OR],
+            self::FIELD_NAME => [self::DOT],
+            self::CONDITIONAL => [self::OPEN_BRACKET],
+            self::AND_OR => [self::FIELD_NAME, self::OPEN_BRACKET],
+            self::VALUE => [self::VALUE_SEPARATOR, self::CLOSE_BRACKET],
+            self::VALUE_SEPARATOR => [self::VALUE],
+            self::DOT => [self::CONDITIONAL],
+        ];
 
-            if (!in_array($type, $available_contexts[$context])) {
-                // todo: throw exception
-                // this type is not allowed in this context
-            }
-//        }
+        if(array_key_exists($previous_context, $allowed_context_map)){
+            return $allowed_context_map[$previous_context];
+        }
+        //todo make better exception
+        throw new \Exception("The last context '{$previous_context}' does have any allowed contexts");
+    }
+
+    /**
+     * Gets the indentation from the context
+     * @param int $current_indentation
+     * @param int $context A const on this classs
+     * @return int
+     */
+    public function getIndentation($current_indentation, $context)
+    {
+        if($context == self::OPEN_BRACKET){
+            $current_indentation++;
+        } else  if($context == self::CLOSE_BRACKET){
+            $current_indentation--;
+        }
+
+        return $current_indentation;
     }
 }
