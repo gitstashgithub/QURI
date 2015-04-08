@@ -1,5 +1,5 @@
 tests/_output/*
 /vendor
 composer.phar
-codecept.phar
 .idea
+phpunit.phar

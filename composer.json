@@ -12,6 +12,9 @@
   "require": {
     "doctrine/lexer": "1.0.*@dev"
   },
+  "require-dev":{
+
+  },
   "autoload": {
     "psr-4": {
       "Wholemeal\\QueryFilter\\": "src"
