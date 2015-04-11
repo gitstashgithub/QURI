@@ -1,5 +1,7 @@
 <?php namespace Wholemeal\QueryFilter;
 
+use Wholemeal\QueryFilter\Exceptions\ValidationException;
+
 class Parser
 {
     protected $_tokens;
@@ -31,7 +33,11 @@ class Parser
         while ($token = $this->_tokens->peek()) {
             // check the context
 
-            $context = $this->getContext($token['type'], $previous_context);
+            try {
+                $context = $this->getContext($token['type'], $previous_context, $token['value']);
+            } catch (ValidationException $e){
+                throw new ValidationException("Parse error. Invalid input around '{$token['value']}'");
+            }
 
             $current_indentation = $this->getIndentation($current_indentation, $context);
 
@@ -45,7 +51,6 @@ class Parser
             //todo: throw error
         }
 
-        die();
     }
 
     public function getResults()
@@ -72,7 +77,7 @@ class Parser
      * @param int $token_type A token type which is a const on the Lexer class
      * @param int|null $previous_context The last context type which is a const in this class. If null it's assumed to be the first token
      * @return int Returns the current context, will throw exception if it fails
-     * @throws \Exception
+     * @throws ValidationException
      */
     public function getContext($token_type, $previous_context)
     {
@@ -81,7 +86,7 @@ class Parser
         $intersected = array_values(array_intersect($possible_contexts, $allowed_contexts));
 
         if(!count($intersected)){
-            throw new \Exception("Validation exception..... previous context is '{$previous_context}''");
+            throw new ValidationException("");
         }
 
         return $intersected[0];
@@ -144,8 +149,8 @@ class Parser
         if(array_key_exists($previous_context, $allowed_context_map)){
             return $allowed_context_map[$previous_context];
         }
-        //todo make better exception
-        throw new \Exception("The last context '{$previous_context}' does have any allowed contexts");
+
+        throw new ValidationException("");
     }
 
     /**

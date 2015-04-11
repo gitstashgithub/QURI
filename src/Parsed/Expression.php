@@ -1,4 +1,4 @@
-<?php namespace Wholemeal\QueryFilter\Result;
+<?php namespace Wholemeal\QueryFilter\Parsed;
 
 class Expression {
     /** @var boolean _is_or Shows whether it's an or, or an and */

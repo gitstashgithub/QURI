@@ -1,6 +1,7 @@
 <?php namespace Wholemeal\QueryFilter;
 
 use Doctrine\Common\Lexer\AbstractLexer;
+use Wholemeal\QueryFilter\Exceptions\InvalidCharacterException;
 
 class Lexer extends AbstractLexer
 {
@@ -14,17 +15,17 @@ class Lexer extends AbstractLexer
     const CLOSE_BRACKETS      = 6;
     const OPEN_BRACKETS       = 7;
     const COMMA               = 8;
-    const DIVIDE              = 9;
+//    const DIVIDE              = 9;
     const DOT                 = 10;
-    const EQUALS              = 11;
-    const GREATER_THAN        = 12;
-    const LOWER_THAN          = 13;
-    const MINUS               = 14;
-    const MULTIPLY            = 15;
-    const NEGATE              = 16;
-    const PLUS                = 17;
-    const OPEN_CURLY_BRACE    = 18;
-    const CLOSE_CURLY_BRACE   = 19;
+//    const EQUALS              = 11;
+//    const GREATER_THAN        = 12;
+//    const LOWER_THAN          = 13;
+//    const MINUS               = 14;
+//    const MULTIPLY            = 15;
+//    const NEGATE              = 16;
+//    const PLUS                = 17;
+//    const OPEN_CURLY_BRACE    = 18;
+//    const CLOSE_CURLY_BRACE   = 19;
 
     // All tokens that are also identifiers should be >= 100
     const IDENTIFIER          = 100;
@@ -83,14 +84,7 @@ class Lexer extends AbstractLexer
                 ? self::FLOAT : self::INTEGER;
         }
 
-        // Differentiate between quoted names, identifiers, input parameters and symbols
-//        if ($value[0] === "'") {
-//            $value = str_replace("''", "'", substr($value, 1, strlen($value) - 2));
-//
-//            return self::STRING;
-//        } else
         if (ctype_alpha($value[0]) || $value[0] === '_') {
-//            $name = 'Doctrine\ORM\Query\Lexer::' . strtoupper($value);
             $name = self::class .'::' . strtoupper($value);
 
             if (defined($name)) {
@@ -110,18 +104,18 @@ class Lexer extends AbstractLexer
                 case ',': return self::COMMA;
                 case '(': return self::OPEN_BRACKETS;
                 case ')': return self::CLOSE_BRACKETS;
-                case '=': return self::EQUALS;
-                case '>': return self::GREATER_THAN;
-                case '<': return self::LOWER_THAN;
-                case '+': return self::PLUS;
-                case '-': return self::MINUS;
-                case '*': return self::MULTIPLY;
-                case '/': return self::DIVIDE;
-                case '!': return self::NEGATE;
-                case '{': return self::OPEN_CURLY_BRACE;
-                case '}': return self::CLOSE_CURLY_BRACE;
+                case '=': // return self::EQUALS;
+                case '>': // return self::GREATER_THAN;
+                case '<': // return self::LOWER_THAN;
+                case '+': // return self::PLUS;
+                case '-': // return self::MINUS;
+                case '*': // return self::MULTIPLY;
+                case '/': // return self::DIVIDE;
+                case '!': // return self::NEGATE;
+                case '{': // return self::OPEN_CURLY_BRACE;
+                case '}': // return self::CLOSE_CURLY_BRACE;
                 default:
-                    // Do nothing
+                    throw new InvalidCharacterException("Invalid character. The character '{$value}' is not supported");
                     break;
             }
         }

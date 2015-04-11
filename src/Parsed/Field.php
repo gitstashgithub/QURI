@@ -1,4 +1,4 @@
-<?php namespace Wholemeal\QueryFilter\Result;
+<?php namespace Wholemeal\QueryFilter\Parsed;
 
 class Field {
     /** @var string _operator The comparison operator  */
