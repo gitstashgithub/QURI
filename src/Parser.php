@@ -24,7 +24,7 @@ class Parser
         $this->_tokens = $tokens;
     }
 
-    protected function parse()
+    public function parse()
     {
         // there's 2 major contexts, expressions and values
         // values are the final value that proceeds an operator like eq followed by a bracket
