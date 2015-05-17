@@ -1,6 +1,9 @@
 <?php namespace Wholemeal\QueryFilter;
 
+use Wholemeal\QueryFilter\Exceptions\ParseException;
 use Wholemeal\QueryFilter\Exceptions\ValidationException;
+use Wholemeal\QueryFilter\Parsed\Expression;
+use Wholemeal\QueryFilter\Parsed\Operation;
 
 class Parser
 {
@@ -10,10 +13,11 @@ class Parser
     const CLOSE_BRACKET = 2;
     const FIELD_NAME = 3;
     const CONDITIONAL = 4; // eq, neq, etc..
-    const AND_OR = 5;
+    const AND_OR = 5; // , |
     const VALUE = 6;
     const VALUE_SEPARATOR = 7;
     const DOT = 8;
+    const NEW_EXPRESSION = 9; // an open bracket but when a new expression is about to occur
 
     public function __construct(Lexer $tokens)
     {
@@ -29,47 +33,35 @@ class Parser
         $current_indentation = 0;
         $previous_context = null;
 
+        $base_expression = new Expression();
+        $current_expression = $base_expression;
 
         while ($token = $this->_tokens->peek()) {
             // check the context
-
             try {
                 $context = $this->getContext($token['type'], $previous_context, $token['value']);
             } catch (ValidationException $e){
                 throw new ValidationException("Parse error. Invalid input around '{$token['value']}'");
             }
 
+            $current_expression = $this->applyContextToExp($current_expression, $context, $previous_context, $token['value']);
             $current_indentation = $this->getIndentation($current_indentation, $context);
-
-            //todo: use the context to build either an expression or field class
-
             $previous_context = $context;
         }
 
-        // todo: check that it ended on a bracket too
+        if(isset($context) && $context != self::CLOSE_BRACKET){
+            throw new ParseException("Malformed input, error near '" . $token['value'] . "'");
+        }
         if ($current_indentation != 0) {
-            //todo: throw error
+            throw new ParseException("Incorrect indentation");
         }
 
+        return $base_expression;
     }
 
     public function getResults()
     {
-        $this->parse();
-
-        //(field_1.eq(1)|field_2.in(2,3,4)),field_3.eq(5)
-        /*
-
-        field_1.eq(1)|field_2.in(2,3,4)
-        and
-        field_3.eq(5)
-
-
-        field_1.eq(1)
-        or
-        field_2.in(2,3,4)
-
-         */
+        return $this->parse();
     }
 
     /**
@@ -105,8 +97,9 @@ class Parser
             Lexer::STRING => [self::FIELD_NAME, self::VALUE],
             Lexer::FLOAT => [self::VALUE],
             Lexer::CLOSE_BRACKETS => [self::CLOSE_BRACKET],
-            Lexer::OPEN_BRACKETS => [self::OPEN_BRACKET],
+            Lexer::OPEN_BRACKETS => [self::OPEN_BRACKET, self::NEW_EXPRESSION],
             Lexer::COMMA => [self::AND_OR, self::VALUE_SEPARATOR],
+            Lexer::PIPE => [self::AND_OR],
             Lexer::DOT => [self::DOT],
             Lexer::EQ => [self::CONDITIONAL],
             Lexer::NEQ => [self::CONDITIONAL],
@@ -135,12 +128,13 @@ class Parser
     public function getAllowedContexts($previous_context)
     {
         $allowed_context_map = [
-            null => [self::OPEN_BRACKET, self::FIELD_NAME],
-            self::OPEN_BRACKET => [self::FIELD_NAME, self::VALUE],
-            self::CLOSE_BRACKET => [self::AND_OR],
+            null => [self::NEW_EXPRESSION, self::FIELD_NAME],
+            self::OPEN_BRACKET => [self::VALUE],
+            self::NEW_EXPRESSION => [self::FIELD_NAME],
+            self::CLOSE_BRACKET => [self::AND_OR, self::CLOSE_BRACKET],
             self::FIELD_NAME => [self::DOT],
             self::CONDITIONAL => [self::OPEN_BRACKET],
-            self::AND_OR => [self::FIELD_NAME, self::OPEN_BRACKET],
+            self::AND_OR => [self::FIELD_NAME, self::NEW_EXPRESSION],
             self::VALUE => [self::VALUE_SEPARATOR, self::CLOSE_BRACKET],
             self::VALUE_SEPARATOR => [self::VALUE],
             self::DOT => [self::CONDITIONAL],
@@ -161,12 +155,78 @@ class Parser
      */
     public function getIndentation($current_indentation, $context)
     {
-        if($context == self::OPEN_BRACKET){
+        if(in_array($context, [self::OPEN_BRACKET, self::NEW_EXPRESSION])){
             $current_indentation++;
         } else  if($context == self::CLOSE_BRACKET){
             $current_indentation--;
         }
 
         return $current_indentation;
+    }
+
+    public function getIndentationChange($context){
+        if(in_array($context, [self::OPEN_BRACKET, self::NEW_EXPRESSION])){
+            return 1;
+        } else  if($context == self::CLOSE_BRACKET){
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+
+    public function getToExpressionLevel(Expression $expression, $level=0){
+        if( $level == 0 ){
+            return $expression;
+        }
+        if( $level < 0 ){
+            throw new \Exception("no");
+        }
+        return $this->getToExpressionLevel($expression->getLastChild(),--$level);
+    }
+
+    /**
+     * @param Operation|Expression $current_expression
+     * @param $context
+     * @param $previous_context
+     * @param $value
+     * @return mixed
+     */
+    public function applyContextToExp($current_expression, $context, $previous_context, $value)
+    {
+        switch ($context){
+            case self::FIELD_NAME:
+                $current_expression = $current_expression->createChildOperation();
+                $current_expression->setFieldName($value);
+                break;
+            case self::CONDITIONAL:
+                $current_expression->setOperator($value);
+                break;
+            case self::AND_OR:
+                if($value == ',')
+                    $current_expression->setType("and");
+                else
+                    $current_expression->setType("or");
+                break;
+            case self::VALUE:
+                $current_expression->addValue($value);
+                break;
+            case self::OPEN_BRACKET:
+                // open bracket to set values
+                break;
+            case self::NEW_EXPRESSION:
+                $current_expression = $current_expression->createChildExpression();
+                break;
+            case self::CLOSE_BRACKET:
+                $current_expression = $current_expression->getParent();
+                break;
+            case self::VALUE_SEPARATOR:
+                // do nothing
+                break;
+            case self::DOT:
+                // do nothing
+                break;
+        }
+
+        return $current_expression;
     }
 }

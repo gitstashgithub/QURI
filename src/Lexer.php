@@ -15,6 +15,7 @@ class Lexer extends AbstractLexer
     const CLOSE_BRACKETS      = 6;
     const OPEN_BRACKETS       = 7;
     const COMMA               = 8;
+    const PIPE                = 9;
 //    const DIVIDE              = 9;
     const DOT                 = 10;
 //    const EQUALS              = 11;
@@ -39,6 +40,7 @@ class Lexer extends AbstractLexer
     const GTE                 = 108;
     const LT                  = 109;
     const LTE                 = 110;
+
 
     /**
      * Creates a new query scanner object.
@@ -104,6 +106,7 @@ class Lexer extends AbstractLexer
                 case ',': return self::COMMA;
                 case '(': return self::OPEN_BRACKETS;
                 case ')': return self::CLOSE_BRACKETS;
+                case '|': return self::PIPE;
                 case '=': // return self::EQUALS;
                 case '>': // return self::GREATER_THAN;
                 case '<': // return self::LOWER_THAN;
@@ -115,7 +118,7 @@ class Lexer extends AbstractLexer
                 case '{': // return self::OPEN_CURLY_BRACE;
                 case '}': // return self::CLOSE_CURLY_BRACE;
                 default:
-                    throw new InvalidCharacterException("Invalid character. The character '{$value}' is not supported");
+                            throw new InvalidCharacterException("Invalid character. The character '{$value}' is not supported");
                     break;
             }
         }
