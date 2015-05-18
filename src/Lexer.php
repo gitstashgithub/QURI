@@ -59,8 +59,10 @@ class Lexer extends AbstractLexer
     {
         return array(
             '[a-z_\\\][a-z0-9_\:\\\]*[a-z0-9_]{1}',
-            '(?:[0-9]+(?:[\.][0-9]+)*)(?:e[+-]?[0-9]+)?',
-            "'(?:[^']|'')*'",
+            '(?:[0-9]+(?:[\.][0-9]+)*)(?:e[+-]?[0-9]+)?', //int + float matching
+            //"'(?:[^']|'')*'",
+            "'(?:[^'\\\\]|\\\\.)*'", //'QUOTED \' "STRING"'
+            '"(?:[^"\\\]|\\\.)*"', //"QUOTED \" STRING", Two quotes surrounding zero or more of "any character that's not a quote or a backslash" or "a backslash followed by any character"
             '\?[0-9]*|:[a-z]{1}[a-z0-9_]{0,}'
         );
     }
@@ -86,8 +88,14 @@ class Lexer extends AbstractLexer
                 ? self::FLOAT : self::INTEGER;
         }
 
+        //Strings
+        if ($value[0] === "'") {
+            $value = str_replace("\\'", "'", substr($value, 1, strlen($value) - 2));
+            return self::STRING;
+        }
+
         if (ctype_alpha($value[0]) || $value[0] === '_') {
-            $name = self::class .'::' . strtoupper($value);
+            $name = get_class($this) .'::' . strtoupper($value);
 
             if (defined($name)) {
                 $type = constant($name);
@@ -100,29 +108,17 @@ class Lexer extends AbstractLexer
             return self::STRING;
         } else if ($value[0] === '?' || $value[0] === ':') {
             return self::INPUT_PARAMETER;
-        } else {
-            switch ($value) {
-                case '.': return self::DOT;
-                case ',': return self::COMMA;
-                case '(': return self::OPEN_BRACKETS;
-                case ')': return self::CLOSE_BRACKETS;
-                case '|': return self::PIPE;
-                case '=': // return self::EQUALS;
-                case '>': // return self::GREATER_THAN;
-                case '<': // return self::LOWER_THAN;
-                case '+': // return self::PLUS;
-                case '-': // return self::MINUS;
-                case '*': // return self::MULTIPLY;
-                case '/': // return self::DIVIDE;
-                case '!': // return self::NEGATE;
-                case '{': // return self::OPEN_CURLY_BRACE;
-                case '}': // return self::CLOSE_CURLY_BRACE;
-                default:
-                            throw new InvalidCharacterException("Invalid character. The character '{$value}' is not supported");
-                    break;
-            }
         }
 
-        return $type;
+        switch ($value) {
+            case '.': return self::DOT;
+            case ',': return self::COMMA;
+            case '(': return self::OPEN_BRACKETS;
+            case ')': return self::CLOSE_BRACKETS;
+            case '|': return self::PIPE;
+            default:
+                throw new InvalidCharacterException("Invalid character. The character '{$value}' is not supported");
+                break;
+        }
     }
 }
