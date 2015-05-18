@@ -9,13 +9,13 @@ include_once "../vendor/autoload.php";
 ?>
 <form action="index.php">
     Test input:
-    <input type="text" name="test_str" style="width: 400px" value="<?= isset($_GET['test_str'])?$_GET['test_str']:'' ?>" />
+    <input type="text" name="test_str" style="width: 400px" value="<?php echo isset($_GET['test_str'])?$_GET['test_str']:'' ?>" />
     <br />
     <br />
     <input type="submit" value="Submit">
 </form>
 <pre>
-<?
+<?php
 
 if(isset($_GET['test_str']) && $_GET['test_str']){
     $strings_to_test = [
