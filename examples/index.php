@@ -7,9 +7,9 @@ ini_set('display_errors', 1);
 include_once "../vendor/autoload.php";
 
 ?>
-<form action="index.php">
+<form action="./">
     Test input:
-    <input type="text" name="test_str" style="width: 400px" value="<?php echo isset($_GET['test_str'])?$_GET['test_str']:'' ?>" />
+    <input type="text" name="test_str" style="width: 400px" value="<?php echo htmlentities(isset($_GET['test_str'])?$_GET['test_str']:''); ?>" />
     <br />
     <br />
     <input type="submit" value="Submit">
