@@ -1,5 +1,7 @@
 # QURI Spec and Lexer
 
+WORK IN PROGRESS
+
 RESTful api's often propose submitting queries as a single string "q" or as a single
 parameter per field you want to query. Unfortunately, this doesn't deal with a lot
 of common cases that require more exact query execution.
