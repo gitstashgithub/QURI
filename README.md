@@ -1,5 +1,7 @@
 # QURI Spec and Lexer
 
+[![Build Status](https://travis-ci.org/theHarvester/QURI.svg?branch=master)](https://travis-ci.org/theHarvester/QURI)
+
 WORK IN PROGRESS
 
 RESTful api's often propose submitting queries as a single string "q" or as a single
