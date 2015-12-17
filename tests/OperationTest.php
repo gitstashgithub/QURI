@@ -49,6 +49,7 @@ class OperationTest extends PHPUnit_Framework_TestCase
         $expected = [
             'field_name' => 'name',
             'operator' => 'eq',
+            'type' => 'operation',
             'values' => [
                 'one', 'two'
             ]
