@@ -1,4 +1,6 @@
-<?php namespace BkvFoundry\Quri;
+<?php
+
+namespace BkvFoundry\Quri;
 
 use BkvFoundry\Quri\Exceptions\ParseException;
 use BkvFoundry\Quri\Exceptions\ValidationException;
@@ -7,7 +9,7 @@ use BkvFoundry\Quri\Parsed\Operation;
 
 class Parser
 {
-    protected $_tokens;
+    protected $tokens;
 
     const OPEN_BRACKET = 1;
     const CLOSE_BRACKET = 2;
@@ -19,37 +21,65 @@ class Parser
     const DOT = 8;
     const NEW_EXPRESSION = 9; // an open bracket but when a new expression is about to occur
 
+    /**
+     * @param Lexer $tokens
+     */
     public function __construct(Lexer $tokens)
     {
-        $this->_tokens = $tokens;
+        $this->tokens = $tokens;
     }
 
+    /**
+     * Quickly initialize the Lexer and parse the string
+     *
+     * @param $string
+     * @return Expression
+     * @throws ParseException
+     * @throws ValidationException
+     */
+    public static function initAndParse($string)
+    {
+        $new = new static(new Lexer($string));
+        return $new->parse();
+    }
+
+    /**
+     * Parses the Lexer which is passed into the constructor and returns an Expression object
+     *
+     * There's two contexts of object in this library. An Expression and a Value.
+     * An expression is the context of the query information where the value is simply values in that context
+     *
+     * Here's an example. field_1.eq(10)
+     * The expression is the field name (field_1), the fact that we're in an "and" context and the fact that
+     * we are looking for an exact match (eq). Where as the value is simply the value 10.
+     *
+     * @return Expression
+     * @throws ParseException
+     * @throws ValidationException
+     */
     public function parse()
     {
-        // there's 2 major contexts, expressions and values
-        // values are the final value that proceeds an operator like eq followed by a bracket
         // first let's make a flag to show if we are in the value scope or an operator has just occurred
-
         $current_indentation = 0;
         $previous_context = null;
 
         $base_expression = new Expression();
         $current_expression = $base_expression;
 
-        while ($token = $this->_tokens->peek()) {
+        while ($token = $this->tokens->peek()) {
             // check the context
             try {
-                $context = $this->getContext($token['type'], $previous_context, $token['value']);
-            } catch (ValidationException $e){
+                $context = $this->getContext($token['type'], $previous_context);
+            } catch (ValidationException $e) {
                 throw new ValidationException("Parse error. Invalid input around '{$token['value']}'");
             }
 
-            $current_expression = $this->applyContextToExp($current_expression, $context, $previous_context, $token['value']);
+            $current_expression = $this->applyContextToExp($current_expression, $context, $token['value']);
             $current_indentation = $this->getIndentation($current_indentation, $context);
             $previous_context = $context;
         }
 
-        if(isset($context) && $context != self::CLOSE_BRACKET){
+        if (isset($context) && $context != self::CLOSE_BRACKET) {
             throw new ParseException("Malformed input, error near '" . $token['value'] . "'");
         }
         if ($current_indentation != 0) {
@@ -59,13 +89,9 @@ class Parser
         return $base_expression;
     }
 
-    public function getResults()
-    {
-        return $this->parse();
-    }
-
     /**
      * Returns the context (a const in this class) from a token type (a Lexer const)
+     *
      * @param int $token_type A token type which is a const on the Lexer class
      * @param int|null $previous_context The last context type which is a const in this class. If null it's assumed to be the first token
      * @return int Returns the current context, will throw exception if it fails
@@ -77,7 +103,7 @@ class Parser
         $allowed_contexts = $this->getAllowedContexts($previous_context);
         $intersected = array_values(array_intersect($possible_contexts, $allowed_contexts));
 
-        if(!count($intersected)){
+        if (!count($intersected)) {
             throw new ValidationException("");
         }
 
@@ -85,7 +111,8 @@ class Parser
     }
 
     /**
-     * Gets an array of possible contexts
+     * Gets an array of possible contexts for a given token type
+     *
      * @param int $token_type A token type which is a const on the Lexer class
      * @return
      * @throws \Exception
@@ -113,7 +140,7 @@ class Parser
             Lexer::LT => [self::CONDITIONAL],
             Lexer::LTE => [self::CONDITIONAL],
         ];
-        if(array_key_exists($token_type, $available_contexts)) {
+        if (array_key_exists($token_type, $available_contexts)) {
             return $available_contexts[$token_type];
         }
         //todo: make better exception
@@ -122,6 +149,7 @@ class Parser
 
     /**
      * Returns an array of allowed contexts
+     *
      * @param int|null $previous_context The last context type which is a const in this class. If null it's assumed to be the first token
      * @return array
      * @throws \Exception
@@ -141,7 +169,7 @@ class Parser
             self::DOT => [self::CONDITIONAL],
         ];
 
-        if(array_key_exists($previous_context, $allowed_context_map)){
+        if (array_key_exists($previous_context, $allowed_context_map)) {
             return $allowed_context_map[$previous_context];
         }
 
@@ -149,52 +177,34 @@ class Parser
     }
 
     /**
-     * Gets the indentation from the context
+     * Gets the indentation from the context.
+     *
      * @param int $current_indentation
      * @param int $context A const on this classs
      * @return int
      */
     public function getIndentation($current_indentation, $context)
     {
-        if(in_array($context, [self::OPEN_BRACKET, self::NEW_EXPRESSION])){
+        if (in_array($context, [self::OPEN_BRACKET, self::NEW_EXPRESSION])) {
             $current_indentation++;
-        } else  if($context == self::CLOSE_BRACKET){
+        } else if ($context == self::CLOSE_BRACKET) {
             $current_indentation--;
         }
 
         return $current_indentation;
     }
 
-    public function getIndentationChange($context){
-        if(in_array($context, [self::OPEN_BRACKET, self::NEW_EXPRESSION])){
-            return 1;
-        } else  if($context == self::CLOSE_BRACKET){
-            return -1;
-        } else {
-            return 0;
-        }
-    }
-
-    public function getToExpressionLevel(Expression $expression, $level=0){
-        if( $level == 0 ){
-            return $expression;
-        }
-        if( $level < 0 ){
-            throw new \Exception("no");
-        }
-        return $this->getToExpressionLevel($expression->getLastChild(),--$level);
-    }
-
     /**
+     * Applies the context to the expression
+     *
      * @param Operation|Expression $current_expression
-     * @param $context
-     * @param $previous_context
-     * @param $value
+     * @param int $context A context from the constants on this class
+     * @param mixed $value A value to store for the context
      * @return mixed
      */
-    public function applyContextToExp($current_expression, $context, $previous_context, $value)
+    public function applyContextToExp($current_expression, $context, $value)
     {
-        switch ($context){
+        switch ($context) {
             case self::FIELD_NAME:
                 $current_expression = $current_expression->createChildOperation();
                 $current_expression->setFieldName($value);
@@ -203,7 +213,7 @@ class Parser
                 $current_expression->setOperator($value);
                 break;
             case self::AND_OR:
-                if($value == ',')
+                if ($value == ',')
                     $current_expression->setType("and");
                 else
                     $current_expression->setType("or");

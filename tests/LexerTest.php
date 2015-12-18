@@ -85,6 +85,12 @@ class LexerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->mintToken("te'st", Lexer::STRING, 0), $lexer->peek());
     }
 
+    public function testDoubleQuotedString()
+    {
+        $lexer = new Lexer('"testing \" test"');
+        $this->assertEquals($this->mintToken('testing " test', Lexer::STRING, 0), $lexer->peek());
+    }
+
     public function testQuotedStringWithSpaces()
     {
         $lexer = new Lexer("'test test'");

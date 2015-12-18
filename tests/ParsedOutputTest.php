@@ -1,13 +1,12 @@
 <?php
 
-use BkvFoundry\Quri\ParserFactory;
+use BkvFoundry\Quri\Parser;
 
 class ParsedOutputTest extends PHPUnit_Framework_TestCase
 {
     protected function performTest($str, array $expected)
     {
-        $parser = ParserFactory::make($str);
-        $this->assertEquals($parser->getResults()->toArray(), $expected);
+        $this->assertEquals(Parser::initAndParse($str)->toArray(), $expected);
     }
 
     public function testEquals()
@@ -357,6 +356,28 @@ class ParsedOutputTest extends PHPUnit_Framework_TestCase
                         "operator" => "nin",
                         "values" => [
                             "tester's worst nightmare"
+                        ]
+                    ]
+                ]
+            ]
+        );
+    }
+
+    public function testDoubleFieldAndDoubleQuotedInput()
+    {
+        $this->performTest(
+            '"field_1.field_2".nin("tester\\"s worst nightmare")',
+            [
+                "type" => "expression",
+                "and_or" => "and",
+                "nested_expressions" => [],
+                "operations" => [
+                    [
+                        "type" => "operation",
+                        "field_name" => "field_1.field_2",
+                        "operator" => "nin",
+                        "values" => [
+                            "tester\"s worst nightmare"
                         ]
                     ]
                 ]

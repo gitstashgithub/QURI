@@ -1,6 +1,7 @@
 <?php
 
-use BkvFoundry\Quri\ParserFactory;
+use BkvFoundry\Quri\Lexer;
+use BkvFoundry\Quri\Parser;
 
 ini_set('display_errors', 1);
 
@@ -33,7 +34,7 @@ if(isset($_GET['test_str']) && $_GET['test_str']){
 
 foreach($strings_to_test as $test_str) {
     print '-- String to test -- <br />' . $test_str . '<br /><br />-- Result -- <br />';
-    print json_encode(ParserFactory::make($test_str)->getResults()->toArray(), JSON_PRETTY_PRINT);
+    print json_encode((new Parser(new Lexer($test_str)))->parse()->toArray(), JSON_PRETTY_PRINT);
     print '<br /><br /><br />';
 }
 

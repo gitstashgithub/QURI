@@ -1,65 +1,95 @@
-<?php namespace BkvFoundry\Quri\Parsed;
+<?php
+
+namespace BkvFoundry\Quri\Parsed;
 
 use BkvFoundry\Quri\Exceptions\ParseException;
 use BkvFoundry\Quri\Exceptions\ValidationException;
 
 class Expression
 {
-    /** @var string $_type String to show the expression type, can be 'and' or 'or' */
-    protected $_type = "and";
-    protected $_nested_expressions = [];
-    protected $_parent;
-    protected $_operations = [];
+    /** @var string $type String to show the expression type, can be 'and' or 'or' */
+    protected $type = "and";
+    protected $nested_expressions = [];
+    protected $parent;
+    protected $operations = [];
 
+    /**
+     * @param string $type and|or
+     * @throws ValidationException
+     */
     public function setType($type)
     {
         if (!in_array($type, ['and', 'or'])) {
             throw new ValidationException("Expression can only be set to 'and' or 'or'");
         }
-        $this->_type = $type;
+        $this->type = $type;
     }
 
+    /**
+     * @return string and|or
+     */
     public function getType()
     {
-        return $this->_type;
+        return $this->type;
     }
 
+    /**
+     * @param Expression $parent
+     */
     public function setParent(Expression $parent)
     {
-        $this->_parent = $parent;
+        $this->parent = $parent;
     }
 
+    /**
+     * @return Expression|null
+     */
     public function getParent()
     {
-        return $this->_parent;
+        return $this->parent;
     }
 
+    /**
+     * @return Expression
+     */
     public function createChildExpression()
     {
         $expression = new Expression();
-        $this->_nested_expressions[] = $expression;
+        $this->nested_expressions[] = $expression;
         $expression->setParent($this);
         return $expression;
     }
 
+    /**
+     * @return Expression[]
+     */
     public function getChildExpressions()
     {
-        return $this->_nested_expressions;
+        return $this->nested_expressions;
     }
 
+    /**
+     * @return Operation
+     */
     public function createChildOperation()
     {
         $operation = new Operation();
         $operation->setParent($this);
-        $this->_operations[] = $operation;
+        $this->operations[] = $operation;
         return $operation;
     }
 
+    /**
+     * @return array
+     */
     public function getChildOperations()
     {
-        return $this->_operations;
+        return $this->operations;
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         return [
@@ -70,21 +100,25 @@ class Expression
         ];
     }
 
+    /**
+     * @return array
+     */
     public function childOperationsToArray()
     {
         $results = [];
-        foreach($this->getChildOperations() as $operation)
-        {
+        foreach ($this->getChildOperations() as $operation) {
             $results[] = $operation->toArray();
         }
         return $results;
     }
 
+    /**
+     * @return array
+     */
     public function childExpressionsToArray()
     {
         $results = [];
-        foreach($this->getChildExpressions() as $expression)
-        {
+        foreach ($this->getChildExpressions() as $expression) {
             $results[] = $expression->toArray();
         }
         return $results;

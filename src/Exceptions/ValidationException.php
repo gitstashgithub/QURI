@@ -1,3 +1,7 @@
-<?php namespace BkvFoundry\Quri\Exceptions;
+<?php
 
-class ValidationException extends Exception {}
+namespace BkvFoundry\Quri\Exceptions;
+
+class ValidationException extends Exception
+{
+}

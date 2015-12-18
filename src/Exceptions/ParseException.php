@@ -1,3 +1,7 @@
-<?php namespace BkvFoundry\Quri\Exceptions;
+<?php
 
-class ParseException extends Exception {}
+namespace BkvFoundry\Quri\Exceptions;
+
+class ParseException extends Exception
+{
+}

@@ -4,6 +4,7 @@
 
 WORK IN PROGRESS
 
+
 RESTful api's often propose submitting queries as a single string "q" or as a single
 parameter per field you want to query. Unfortunately, this doesn't deal with a lot
 of common cases that require more exact query execution.
@@ -41,4 +42,7 @@ Wrapping `()` brackets can be used to affect order of operations for queries.
 
 ### Escaping values:
 * Quotes (single or double) `" or '` can be used to escape strings e.g. `field.like("apple=orang%")`
-* Escaping qoutes: If you need to use quotes, you can use the `\\` character to escape the quote character
+* Escaping qoutes: If you need to use quotes, you can use the `\` character to escape the quote character
+
+### Complex field names:
+Quoting strings also works for field names which allows for more flexibility. For example `'field_1.field_2'` will result with `field_1.field_2` in the field name, this can be useful for related table searches.

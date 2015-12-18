@@ -1,4 +1,6 @@
-<?php namespace BkvFoundry\Quri;
+<?php
+
+namespace BkvFoundry\Quri;
 
 use Doctrine\Common\Lexer\AbstractLexer;
 use BkvFoundry\Quri\Exceptions\InvalidCharacterException;
@@ -92,6 +94,11 @@ class Lexer extends AbstractLexer
         //Strings
         if ($value[0] === "'") {
             $value = str_replace("\\'", "'", substr($value, 1, strlen($value) - 2));
+            return self::STRING;
+        }
+
+        if ($value[0] === '"') {
+            $value = str_replace('\\"', '"', substr($value, 1, strlen($value) - 2));
             return self::STRING;
         }
 
