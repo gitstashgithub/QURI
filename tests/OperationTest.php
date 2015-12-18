@@ -1,7 +1,7 @@
 <?php
 
-use BkvFoundry\QueryFilter\Parsed\Expression;
-use BkvFoundry\QueryFilter\Parsed\Operation;
+use BkvFoundry\Quri\Parsed\Expression;
+use BkvFoundry\Quri\Parsed\Operation;
 
 class OperationTest extends PHPUnit_Framework_TestCase
 {

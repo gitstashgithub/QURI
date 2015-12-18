@@ -1,6 +1,6 @@
 <?php
 
-use BkvFoundry\QueryFilter\ParserFactory;
+use BkvFoundry\Quri\ParserFactory;
 
 ini_set('display_errors', 1);
 

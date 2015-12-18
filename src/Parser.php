@@ -1,9 +1,9 @@
-<?php namespace BkvFoundry\QueryFilter;
+<?php namespace BkvFoundry\Quri;
 
-use BkvFoundry\QueryFilter\Exceptions\ParseException;
-use BkvFoundry\QueryFilter\Exceptions\ValidationException;
-use BkvFoundry\QueryFilter\Parsed\Expression;
-use BkvFoundry\QueryFilter\Parsed\Operation;
+use BkvFoundry\Quri\Exceptions\ParseException;
+use BkvFoundry\Quri\Exceptions\ValidationException;
+use BkvFoundry\Quri\Parsed\Expression;
+use BkvFoundry\Quri\Parsed\Operation;
 
 class Parser
 {

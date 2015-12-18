@@ -1,6 +1,6 @@
 <?php
 
-use BkvFoundry\QueryFilter\ParserFactory;
+use BkvFoundry\Quri\ParserFactory;
 
 class ParsedOutputTest extends PHPUnit_Framework_TestCase
 {

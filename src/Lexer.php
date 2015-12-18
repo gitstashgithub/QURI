@@ -1,7 +1,7 @@
-<?php namespace BkvFoundry\QueryFilter;
+<?php namespace BkvFoundry\Quri;
 
 use Doctrine\Common\Lexer\AbstractLexer;
-use BkvFoundry\QueryFilter\Exceptions\InvalidCharacterException;
+use BkvFoundry\Quri\Exceptions\InvalidCharacterException;
 
 class Lexer extends AbstractLexer
 {

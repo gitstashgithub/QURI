@@ -1,6 +1,6 @@
 <?php
 
-use BkvFoundry\QueryFilter\Parsed\Expression;
+use BkvFoundry\Quri\Parsed\Expression;
 
 class ExpressionTest extends PHPUnit_Framework_TestCase
 {

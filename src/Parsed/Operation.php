@@ -1,8 +1,8 @@
-<?php namespace BkvFoundry\QueryFilter\Parsed;
+<?php namespace BkvFoundry\Quri\Parsed;
 
 /**
  * Class Operation Stores a field name and values for that belong to a single operation
- * @package BkvFoundry\QueryFilter\Parsed
+ * @package BkvFoundry\Quri\Parsed
  */
 class Operation {
     protected $_field_name;

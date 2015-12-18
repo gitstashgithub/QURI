@@ -1,7 +1,7 @@
-<?php namespace BkvFoundry\QueryFilter\Parsed;
+<?php namespace BkvFoundry\Quri\Parsed;
 
-use BkvFoundry\QueryFilter\Exceptions\ParseException;
-use BkvFoundry\QueryFilter\Exceptions\ValidationException;
+use BkvFoundry\Quri\Exceptions\ParseException;
+use BkvFoundry\Quri\Exceptions\ValidationException;
 
 class Expression
 {

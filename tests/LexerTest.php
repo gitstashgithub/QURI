@@ -1,6 +1,6 @@
 <?php
 
-use BkvFoundry\QueryFilter\Lexer;
+use BkvFoundry\Quri\Lexer;
 
 class LexerTest extends PHPUnit_Framework_TestCase
 {
