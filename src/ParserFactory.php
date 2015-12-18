@@ -1,4 +1,4 @@
-<?php namespace Wholemeal\QueryFilter;
+<?php namespace BkvFoundry\QueryFilter;
 
 class ParserFactory
 {

@@ -1,9 +1,6 @@
 <?php
 
-//todo fix this madness
-use Wholemeal\QueryFilter\ParserFactory;
-
-require_once "vendor/autoload.php";
+use BkvFoundry\QueryFilter\ParserFactory;
 
 class ParsedOutputTest extends PHPUnit_Framework_TestCase
 {

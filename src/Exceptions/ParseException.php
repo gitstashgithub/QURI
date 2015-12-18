@@ -1,3 +1,3 @@
-<?php namespace Wholemeal\QueryFilter\Exceptions;
+<?php namespace BkvFoundry\QueryFilter\Exceptions;
 
 class ParseException extends Exception {}

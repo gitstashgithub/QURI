@@ -1,7 +1,7 @@
-<?php namespace Wholemeal\QueryFilter\Parsed;
+<?php namespace BkvFoundry\QueryFilter\Parsed;
 
-use Wholemeal\QueryFilter\Exceptions\ParseException;
-use Wholemeal\QueryFilter\Exceptions\ValidationException;
+use BkvFoundry\QueryFilter\Exceptions\ParseException;
+use BkvFoundry\QueryFilter\Exceptions\ValidationException;
 
 class Expression
 {

@@ -1,26 +1,23 @@
 {
-  "name": "wholemeal/simple-query-filter",
-  "description": "description_text",
+  "name": "BkvFoundry/QURI",
+  "description": "QURI allows you to construct complex expressions in a single string",
   "minimum-stability": "stable",
-  "license": "proprietary",
+  "license": "MIT",
   "authors": [
     {
       "name": "James Harvey",
-      "email": "email@example.com"
+      "email": "james.harvey994@gmail.com"
     }
   ],
   "require": {
     "doctrine/lexer": "1.0.*@dev"
   },
-  "require-dev":{
-
-  },
   "autoload-dev": {
-    "psr-4": { "Wholemeal\\Tests\\": "tests" }
+    "psr-4": { "BkvFoundry\\Tests\\": "tests" }
   },
   "autoload": {
     "psr-4": {
-      "Wholemeal\\QueryFilter\\": "src"
+      "BkvFoundry\\QueryFilter\\": "src"
     }
   }
 }

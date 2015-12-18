@@ -1,9 +1,6 @@
 <?php
 
-//todo fix this madness
-require_once "vendor/autoload.php";
-
-use Wholemeal\QueryFilter\Parsed\Expression;
+use BkvFoundry\QueryFilter\Parsed\Expression;
 
 class ExpressionTest extends PHPUnit_Framework_TestCase
 {

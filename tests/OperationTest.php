@@ -1,10 +1,7 @@
 <?php
 
-//todo fix this madness
-require_once "vendor/autoload.php";
-
-use Wholemeal\QueryFilter\Parsed\Expression;
-use Wholemeal\QueryFilter\Parsed\Operation;
+use BkvFoundry\QueryFilter\Parsed\Expression;
+use BkvFoundry\QueryFilter\Parsed\Operation;
 
 class OperationTest extends PHPUnit_Framework_TestCase
 {

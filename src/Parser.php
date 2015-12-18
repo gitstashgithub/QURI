@@ -1,9 +1,9 @@
-<?php namespace Wholemeal\QueryFilter;
+<?php namespace BkvFoundry\QueryFilter;
 
-use Wholemeal\QueryFilter\Exceptions\ParseException;
-use Wholemeal\QueryFilter\Exceptions\ValidationException;
-use Wholemeal\QueryFilter\Parsed\Expression;
-use Wholemeal\QueryFilter\Parsed\Operation;
+use BkvFoundry\QueryFilter\Exceptions\ParseException;
+use BkvFoundry\QueryFilter\Exceptions\ValidationException;
+use BkvFoundry\QueryFilter\Parsed\Expression;
+use BkvFoundry\QueryFilter\Parsed\Operation;
 
 class Parser
 {
