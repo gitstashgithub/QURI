@@ -104,6 +104,7 @@ class Parser
             Lexer::EQ => [self::CONDITIONAL],
             Lexer::NEQ => [self::CONDITIONAL],
             Lexer::IN => [self::CONDITIONAL],
+            Lexer::NIN => [self::CONDITIONAL],
             Lexer::OUT => [self::CONDITIONAL],
             Lexer::LIKE => [self::CONDITIONAL],
             Lexer::BETWEEN => [self::CONDITIONAL],

@@ -16,8 +16,8 @@ class Lexer extends AbstractLexer
     const OPEN_BRACKETS       = 7;
     const COMMA               = 8;
     const PIPE                = 9;
-//    const DIVIDE              = 9;
     const DOT                 = 10;
+//    const DIVIDE              = 9;
 //    const EQUALS              = 11;
 //    const GREATER_THAN        = 12;
 //    const LOWER_THAN          = 13;
@@ -33,6 +33,7 @@ class Lexer extends AbstractLexer
     const EQ                  = 101;
     const NEQ                 = 102;
     const IN                  = 103;
+    const NIN                 = 111;
     const OUT                 = 104;
     const LIKE                = 105;
     const BETWEEN             = 106;

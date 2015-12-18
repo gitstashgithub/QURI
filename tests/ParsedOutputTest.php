@@ -341,4 +341,26 @@ class ParsedOutputTest extends PHPUnit_Framework_TestCase
             ]
         );
     }
+
+    public function testStringInput()
+    {
+        $this->performTest(
+            ' field_1 . nin( \'tester\\\'s worst nightmare\' ) ',
+            [
+                "type" => "expression",
+                "and_or" => "and",
+                "nested_expressions" => [],
+                "operations" => [
+                    [
+                        "type" => "operation",
+                        "field_name" => "field_1",
+                        "operator" => "nin",
+                        "values" => [
+                            "tester's worst nightmare"
+                        ]
+                    ]
+                ]
+            ]
+        );
+    }
 }
