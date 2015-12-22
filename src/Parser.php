@@ -71,7 +71,7 @@ class Parser
             try {
                 $context = $this->getContext($token['type'], $previous_context);
             } catch (ValidationException $e) {
-                throw new ValidationException("Parse error. Invalid input around '{$token['value']}'");
+                throw new ValidationException("QURI string could not be parsed. The unexpected input of '{$token['value']}' was found in your query at character {$token['position']}.");
             }
 
             $current_expression = $this->applyContextToExp($current_expression, $context, $token['value']);
@@ -206,7 +206,7 @@ class Parser
     {
         switch ($context) {
             case self::FIELD_NAME:
-                $current_expression = $current_expression->createChildOperation();
+                $current_expression = $current_expression->createOperation();
                 $current_expression->setFieldName($value);
                 break;
             case self::CONDITIONAL:
@@ -225,7 +225,7 @@ class Parser
                 // open bracket to set values
                 break;
             case self::NEW_EXPRESSION:
-                $current_expression = $current_expression->createChildExpression();
+                $current_expression = $current_expression->createNestedExpression();
                 break;
             case self::CLOSE_BRACKET:
                 $current_expression = $current_expression->getParent();

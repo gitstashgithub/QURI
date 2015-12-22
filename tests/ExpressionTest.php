@@ -25,7 +25,7 @@ class ExpressionTest extends PHPUnit_Framework_TestCase
     public function testCreateChildExpression()
     {
         $expression = new Expression();
-        $child = $expression->createChildExpression();
+        $child = $expression->createNestedExpression();
         $child->setType("or");
 
         $this->assertEquals($child->getParent(), $expression);
@@ -35,14 +35,14 @@ class ExpressionTest extends PHPUnit_Framework_TestCase
     public function testCreateChildOperation()
     {
         $expression = new Expression();
-        $operation = $expression->createChildOperation();
-        $this->assertEquals($expression->getChildOperations()[0], $operation);
+        $operation = $expression->createOperation();
+        $this->assertEquals($expression->operations()[0], $operation);
     }
 
     public function testChildOperationHasParent()
     {
         $expression = new Expression();
-        $operation = $expression->createChildOperation();
+        $operation = $expression->createOperation();
 
         $this->assertEquals($operation->getParent(), $expression);
     }
@@ -66,7 +66,7 @@ class ExpressionTest extends PHPUnit_Framework_TestCase
     {
         $expression = new Expression();
         $expression->setType("and");
-        $child = $expression->createChildExpression();
+        $child = $expression->createNestedExpression();
         $child->setType("or");
 
         $expected = [
@@ -90,7 +90,7 @@ class ExpressionTest extends PHPUnit_Framework_TestCase
     {
         $expression = new Expression();
         $expression->setType("and");
-        $operation = $expression->createChildOperation();
+        $operation = $expression->createOperation();
         $operation->setFieldName("field_name");
         $operation->setOperator("eq");
         $operation->addValue("val_1");

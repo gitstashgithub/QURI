@@ -46,3 +46,29 @@ Wrapping `()` brackets can be used to affect order of operations for queries.
 
 ### Complex field names:
 Quoting strings also works for field names which allows for more flexibility. For example `'field_1.field_2'` will result with `field_1.field_2` in the field name, this can be useful for related table searches.
+
+#TODO how to construct a query here
+
+## Using the parser
+To initialize the Parser, we first need to create a Lexer and pass it in.
+
+```
+$queryStr = $_GET['q'];
+$lexer = new Lexer($queryStr);
+$parser = new Parser($lexer);
+$expression = $parser->parse();
+```
+
+Altertively this can be done through a helper method on the Parser class.
+
+```
+$expression = Parser::initAndParse($queryStr);
+```
+
+### Using the expression object
+
+After a string has been parsed and the expression object has been returned. An expression object can retrieve the operations and further nested expressions.
+
+```
+TODO
+```

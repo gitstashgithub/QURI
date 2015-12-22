@@ -2,15 +2,17 @@
 
 namespace BkvFoundry\Quri\Parsed;
 
-use BkvFoundry\Quri\Exceptions\ParseException;
 use BkvFoundry\Quri\Exceptions\ValidationException;
 
 class Expression
 {
     /** @var string $type String to show the expression type, can be 'and' or 'or' */
     protected $type = "and";
+    /** @var Expression[] $nested_expressions An array of nexted expressions  */
     protected $nested_expressions = [];
+    /** @var Expression|null A parent expression used to traverse the expression tree */
     protected $parent;
+    /** @var Operation[] An array of operations attached to this expression */
     protected $operations = [];
 
     /**
@@ -20,7 +22,7 @@ class Expression
     public function setType($type)
     {
         if (!in_array($type, ['and', 'or'])) {
-            throw new ValidationException("Expression can only be set to 'and' or 'or'");
+            throw new ValidationException("QURI Expression can only be set to 'and' or 'or'");
         }
         $this->type = $type;
     }
@@ -52,7 +54,7 @@ class Expression
     /**
      * @return Expression
      */
-    public function createChildExpression()
+    public function createNestedExpression()
     {
         $expression = new Expression();
         $this->nested_expressions[] = $expression;
@@ -63,7 +65,7 @@ class Expression
     /**
      * @return Expression[]
      */
-    public function getChildExpressions()
+    public function nestedExpressions()
     {
         return $this->nested_expressions;
     }
@@ -71,7 +73,7 @@ class Expression
     /**
      * @return Operation
      */
-    public function createChildOperation()
+    public function createOperation()
     {
         $operation = new Operation();
         $operation->setParent($this);
@@ -80,9 +82,9 @@ class Expression
     }
 
     /**
-     * @return array
+     * @return Operation[]
      */
-    public function getChildOperations()
+    public function operations()
     {
         return $this->operations;
     }
@@ -95,18 +97,18 @@ class Expression
         return [
             'type' => 'expression',
             'and_or' => $this->getType(),
-            'nested_expressions' => $this->childExpressionsToArray(),
-            'operations' => $this->childOperationsToArray()
+            'nested_expressions' => $this->nestedExpressionsToArray(),
+            'operations' => $this->operationsToArray()
         ];
     }
 
     /**
      * @return array
      */
-    public function childOperationsToArray()
+    public function operationsToArray()
     {
         $results = [];
-        foreach ($this->getChildOperations() as $operation) {
+        foreach ($this->operations() as $operation) {
             $results[] = $operation->toArray();
         }
         return $results;
@@ -115,10 +117,10 @@ class Expression
     /**
      * @return array
      */
-    public function childExpressionsToArray()
+    public function nestedExpressionsToArray()
     {
         $results = [];
-        foreach ($this->getChildExpressions() as $expression) {
+        foreach ($this->nestedExpressions() as $expression) {
             $results[] = $expression->toArray();
         }
         return $results;

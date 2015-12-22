@@ -125,7 +125,7 @@ class Lexer extends AbstractLexer
             case ')': return self::CLOSE_BRACKETS;
             case '|': return self::PIPE;
             default:
-                throw new InvalidCharacterException("Invalid character. The character '{$value}' is not supported");
+                throw new InvalidCharacterException("Invalid QURI string character. The character '{$value}' is not supported");
                 break;
         }
     }

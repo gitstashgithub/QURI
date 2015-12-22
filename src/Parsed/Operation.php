@@ -3,7 +3,10 @@
 namespace BkvFoundry\Quri\Parsed;
 
 /**
- * Class Operation Stores a field name and values for that belong to a single operation
+ * Class Operation
+ *
+ * Stores a field name and values for that belong to a single operation
+ *
  * @package BkvFoundry\Quri\Parsed
  */
 class Operation
