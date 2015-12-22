@@ -70,5 +70,30 @@ $expression = Parser::initAndParse($queryStr);
 After a string has been parsed and the expression object has been returned. An expression object can retrieve the operations and further nested expressions.
 
 ```
-TODO
+public function applyExpression($builder, Expression $expression)
+{
+    // Determine if the context is an 'and' or an 'or'
+    $andOr = $expression->getType(); 
+    // If there are nested expressions, create a where closure and recurse
+    //
+    // This ensures, (id.eq(1)|id.eq(2)),name.eq("John")
+    // comes out as, where ( id = 1 or id = 2 ) and name = "John"
+    // in the SQL.
+    if ($nestedExpressions = $expression->nestedExpressions()) {
+        // Start a closure so nested expressions are applied to the sql in a nested fashion
+        $builder->where(function ($builder) use ($nestedExpressions) {
+            foreach ($nestedExpressions as $nestedExpression) {
+                // Recurse deeper and apply child expressions to the builder
+                $this->applyExpression($builder, $nestedExpression);
+            }
+        });
+    }
+    // If there are any operations at this level, apply them to the current builder context
+    if ($operations = $expression->operations()) {
+        foreach ($operations as $operation) {
+            // Mutate the builder internernally with the operation object and the andOr
+            $this->applyOperation($builder, $operation, $andOr);
+        }
+    }
+}
 ```
