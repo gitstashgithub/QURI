@@ -1,6 +1,7 @@
 <?php
 
 namespace BkvFoundry\Quri\Parsed;
+
 use BkvFoundry\Quri\Exceptions\ParseException;
 
 /**
@@ -28,7 +29,7 @@ class Operation
     /**
      * @return mixed
      */
-    public function getFieldName()
+    public function fieldName()
     {
         return $this->field_name;
     }
@@ -45,7 +46,7 @@ class Operation
     /**
      * @return mixed
      */
-    public function getOperator()
+    public function operator()
     {
         return $this->operator;
     }
@@ -78,9 +79,17 @@ class Operation
     /**
      * @return mixed
      */
-    public function getValues()
+    public function values()
     {
         return $this->values;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function firstValue()
+    {
+        return current($this->values);
     }
 
     /**
@@ -90,10 +99,10 @@ class Operation
     {
         $value_limit = 1;
 
-        if (in_array($this->getOperator(), ['between'])) {
+        if (in_array($this->operator(), ['between'])) {
             $value_limit = 2;
         }
-        if (in_array($this->getOperator(), ['in','nin', null])) {
+        if (in_array($this->operator(), ['in','nin', null])) {
             $value_limit = 9999;
         }
         if (count($this->values) > $value_limit) {
@@ -108,9 +117,9 @@ class Operation
     {
         return [
             'type' => 'operation',
-            'field_name' => $this->getFieldName(),
-            'operator' => $this->getOperator(),
-            'values' => $this->getValues(),
+            'field_name' => $this->fieldName(),
+            'operator' => $this->operator(),
+            'values' => $this->values(),
         ];
     }
 }

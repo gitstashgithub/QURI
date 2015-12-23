@@ -9,14 +9,14 @@ class OperationTest extends PHPUnit_Framework_TestCase
     {
         $operation = new Operation();
         $operation->setFieldName("test_name");
-        $this->assertEquals("test_name", $operation->getFieldName());
+        $this->assertEquals("test_name", $operation->fieldName());
     }
 
     public function testOperator()
     {
         $operation = new Operation();
         $operation->setOperator("like");
-        $this->assertEquals("like", $operation->getOperator());
+        $this->assertEquals("like", $operation->operator());
     }
 
     public function testValues()
@@ -25,7 +25,15 @@ class OperationTest extends PHPUnit_Framework_TestCase
         $operation->setOperator("in");
         $operation->addValue("one");
         $operation->addValue("two");
-        $this->assertEquals(["one", "two"], $operation->getValues());
+        $this->assertEquals(["one", "two"], $operation->values());
+    }
+
+    public function testFirstValues()
+    {
+        $operation = new Operation();
+        $operation->setOperator("eq");
+        $operation->addValue("one");
+        $this->assertEquals("one", $operation->firstValue());
     }
 
     public function testHasCorrectExpression()
