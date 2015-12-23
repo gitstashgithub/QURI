@@ -1,6 +1,7 @@
 <?php
 
 namespace BkvFoundry\Quri\Parsed;
+use BkvFoundry\Quri\Exceptions\ParseException;
 
 /**
  * Class Operation
@@ -38,6 +39,7 @@ class Operation
     public function setOperator($operator)
     {
         $this->operator = $operator;
+        $this->validate();
     }
 
     /**
@@ -70,6 +72,7 @@ class Operation
     public function addValue($value)
     {
         $this->values[] = $value;
+        $this->validate();
     }
 
     /**
@@ -78,6 +81,24 @@ class Operation
     public function getValues()
     {
         return $this->values;
+    }
+
+    /**
+     * Validates the amount of values for a given operation type
+     */
+    public function validate()
+    {
+        $value_limit = 1;
+
+        if (in_array($this->getOperator(), ['between'])) {
+            $value_limit = 2;
+        }
+        if (in_array($this->getOperator(), ['in','nin', null])) {
+            $value_limit = 9999;
+        }
+        if (count($this->values) > $value_limit) {
+            throw new ParseException("QURI string could not be parsed. Too many values supplied for the '$this->operator' operator.");
+        }
     }
 
     /**

@@ -22,6 +22,7 @@ class OperationTest extends PHPUnit_Framework_TestCase
     public function testValues()
     {
         $operation = new Operation();
+        $operation->setOperator("in");
         $operation->addValue("one");
         $operation->addValue("two");
         $this->assertEquals(["one", "two"], $operation->getValues());
@@ -39,13 +40,13 @@ class OperationTest extends PHPUnit_Framework_TestCase
     {
         $operation = new Operation();
         $operation->setFieldName("name");
-        $operation->setOperator("eq");
+        $operation->setOperator("between");
         $operation->addValue("one");
         $operation->addValue("two");
 
         $expected = [
             'field_name' => 'name',
-            'operator' => 'eq',
+            'operator' => 'between',
             'type' => 'operation',
             'values' => [
                 'one', 'two'
