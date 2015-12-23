@@ -61,6 +61,12 @@ class LexerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->mintToken(',', Lexer::COMMA, 0), $lexer->peek());
     }
 
+    public function testBetween()
+    {
+        $lexer = new Lexer('between');
+        $this->assertEquals($this->mintToken('between', Lexer::BETWEEN, 0), $lexer->peek());
+    }
+
     public function testPipe()
     {
         $lexer = new Lexer('|');
