@@ -139,6 +139,7 @@ class Parser
             Lexer::GTE => [self::CONDITIONAL],
             Lexer::LT => [self::CONDITIONAL],
             Lexer::LTE => [self::CONDITIONAL],
+            Lexer::ISNULL => [self::CONDITIONAL],
         ];
         if (array_key_exists($token_type, $available_contexts)) {
             return $available_contexts[$token_type];

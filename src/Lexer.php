@@ -43,6 +43,7 @@ class Lexer extends AbstractLexer
     const GTE                 = 108;
     const LT                  = 109;
     const LTE                 = 110;
+    const ISNULL              = 111;
 
 
     /**
