@@ -15,7 +15,7 @@ class Operation
 {
     protected $field_name;
     protected $operator;
-    protected $values;
+    protected $values = [];
     protected $parent;
 
     /**
